@@ -1,6 +1,6 @@
 import cv2 # import openCV
 
-alg = 'haarcascade_frontalface_default.xml'  # accessed the model file
+alg = 'Resources/haarcascade_frontalface_default.xml'  # accessed the model file
 
 cascade = cv2.CascadeClassifier(alg) # loading the model with cv2
 
