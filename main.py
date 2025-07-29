@@ -1,6 +1,7 @@
 # pip install opencv-contrib-python
 # pip install caer
- 
+# https://docs.opencv.org/4.x/index.html <--  link to documentation
+#  
 import cv2 as cv
 import sys
 
@@ -41,3 +42,4 @@ def video():
     cv.destroyAllWindows()
 
 video()
+
