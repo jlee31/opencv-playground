@@ -1,32 +1,14 @@
 import cv2 as cv
 import mediapipe as mp
 import os
+import argparse
 
-# read image
-img_raw = cv.imread(os.path.join('.', 'Resources', 'Photos', 'old_man.png'))
-img = cv.resize(img_raw, (500,500))
-
-# Check if image was loaded successfully
-if img is None:
-    print("Error: Could not load the image!")
-    print("Checking if file exists...")
-    image_path = os.path.join('.', 'Resources', 'Photos', 'old_man.png')
-    print(f"Looking for image at: {os.path.abspath(image_path)}")
-    if os.path.exists(image_path):
-        print("File exists but cv2.imread failed")
-    else:
-        print("File does not exist!")
-    exit()
-
-print(f"Image loaded successfully! Shape: {img.shape}")
-H, W, _ = img.shape
-
-# detect the faces
-mp_face = mp.solutions.face_detection
-with mp_face.FaceDetection(min_detection_confidence = 0.5, model_selection = 0) as face_detection:
+def process_image(image, face_detection):
     img_toRGB = cv.cvtColor(img, cv.COLOR_BGR2RGB)
     output = face_detection.process(img_toRGB)
     # print(output.detections)
+
+    H, W, _ = image.shape
 
     for detection in output.detections:
         print("hi")
@@ -66,6 +48,51 @@ with mp_face.FaceDetection(min_detection_confidence = 0.5, model_selection = 0) 
         
         # cv.imshow('Face Blurring MACHINE', img)
         # cv.waitKey(0)
+    return img
 
-# Save Image
-cv.imwrite(os.path.join('.', 'Resources', 'Photos', 'blurred_image.png'), img)
+####################
+
+args = argparse.ArgumentParser()
+args.add_argument("--mode", default='image')
+args.add_argument("--filePath", default='./Resources/Photos/old_man.png')
+args = args.parse_args()
+
+####################
+
+# read image
+filepath = os.path.join('.', 'Resources', 'Photos', 'old_man.png')
+img_raw = cv.imread(filepath)
+img = cv.resize(img_raw, (500,500))
+
+# detect the faces
+mp_face = mp.solutions.face_detection
+with mp_face.FaceDetection(min_detection_confidence = 0.5, model_selection = 0) as face_detection:
+
+    if args.mode in ["image"]:
+        img = cv.imread(args.filePath)
+        img = process_image(img, face_detection)
+        cv.imwrite(os.path.join('.', 'Resources', 'Photos', 'blurred_image2.png'), img)
+
+    elif args.mode in ["video"]:
+        cap = cv.VideoCapture(args.filePath)
+        ret, frame = cap.read()
+        output_video = cv.VideoWriter(os.path.join('.', 'Resources', 'Videos', 'output.mp4'),
+                                      cv.VideoWriter_fourcc(*'MP4V'),
+                                      25,
+                                      (frame.shape[1], frame.shape[0])) 
+        while ret:
+            frame = process_image(frame, face_detection)
+            output_video.write(frame)
+            ret , frame = cap.read() 
+        cap.release()
+        output_video.release()
+
+    elif args.mode in ["webcam"]:
+        webcam = cv.VideoCapture(0)
+        ret, frame = webcam.read()
+        while ret:
+            frame = process_image(frame, face_detection)
+            cv.imshow('Webcam', frame)
+            cv.waitKey(25)
+            ret , frame = webcam.read()
+        webcam.release()
