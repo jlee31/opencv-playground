@@ -2,6 +2,11 @@ import cv2 as cv
 import numpy as np
 from PIL import Image
 
+# Constants
+webcam = cv.VideoCapture(0)
+YELLOW = [0,255,255]
+GREEN  = (0,255,0)
+
 def get_limits(color):
     c = np.uint8([[color]])  # BGR values
     hsvC = cv.cvtColor(c, cv.COLOR_BGR2HSV)
@@ -21,34 +26,30 @@ def get_limits(color):
 
     return lowerLimit, upperLimit
 
+def detect_colour(colour):
+    # Function
+    while True:
+        ret, frame = webcam.read()
 
-# Constants
-webcam = cv.VideoCapture(0)
-YELLOW = [0,255,255]
-GREEN  = (0,255,0)
+        # converting from BGR to HSV
+        hsv_image = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
+        lower_limit, upper_limit = get_limits(color=colour)
+        image_mask = cv.inRange(src=hsv_image, lowerb=lower_limit, upperb=upper_limit) 
 
-# Function
-while True:
-    ret, frame = webcam.read()
+        image_mask_toPillow = Image.fromarray(image_mask)
 
-    # converting from BGR to HSV
-    hsv_image = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
-    lower_limit, upper_limit = get_limits(color=YELLOW)
-    image_mask = cv.inRange(src=hsv_image, lowerb=lower_limit, upperb=upper_limit) 
+        bounding_box = image_mask_toPillow.getbbox()
 
-    image_mask_toPillow = Image.fromarray(image_mask)
+        if bounding_box:
+            x1, y1, x2, y2 = bounding_box
+            cv.rectangle(frame, (x1, y1), (x2, y2), GREEN, 3)
 
-    bounding_box = image_mask_toPillow.getbbox()
+        cv.imshow('Colour Finder', frame)
 
-    if bounding_box:
-        x1, y1, x2, y2 = bounding_box
-        cv.rectangle(frame, (x1, y1), (x2, y2), GREEN, 3)
+        if cv.waitKey(1) & 0xFF == ord('q'):
+            break
+    webcam.release()
+    cv.destroyAllWindows()
+    return
 
-    cv.imshow('Colour Finder', frame)
-
-    if cv.waitKey(1) & 0xFF == ord('q'):
-        break
-
-
-webcam.release()
-cv.destroyAllWindows()
+detect_colour(YELLOW)
