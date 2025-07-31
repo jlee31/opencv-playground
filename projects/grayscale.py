@@ -6,7 +6,7 @@ from tkinter import messagebox
 from PIL import Image, ImageTk
 
 def turn_to_grayscale(img):
-    gray_image = cv.cvtColor(img, cv.COLOR_RGB2GRAY)
+    gray_image = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     return gray_image
 
 def open_file():
