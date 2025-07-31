@@ -47,7 +47,4 @@ btn_frame.pack(pady=10)
 open_button = tk.Button(btn_frame, text="Open Image", command=open_file)
 open_button.grid(row=9, column=5, padx=5)
 
-save_button = tk.Button(btn_frame, text="Save Sketch", command=lambda: print("SKETCH FCN"))
-save_button.grid(row=4, column=10, padx=5)
-
 app.mainloop()
