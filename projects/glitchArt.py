@@ -43,14 +43,29 @@ class GlitchArtGenerator:
             button.pack()
 
     def create_effect_options(self):
+        effects = [
+            ("Brightness", self.adjust_brightness),
+            ("Contrast", self.adjust_contrast),
+            ("Saturation", self.adjust_saturation),
+            ("Blur", self.apply_blur),
+            ("Sharpen", self.apply_sharpen),
+            ("Pixilate", self.apply_pixels),
+            ("Invert Colors", self.apply_invert),
+            ("Add Noise", self.apply_noise),
+            ("Vignette", self.apply_vignette),
+            ("Retro Filter", self.apply_retro_filter)
+        ]
+
+        for text, command in effects:
+            btn = tk.Button(self.effect_frame, text=text, command=command)
+            btn.pack(tk.LEFT, padx=3)
+    
+    def load_image(self):
         pass
 
     def on_closing(self):
         if messagebox.askokcancel("Quit", "Do you wish to quit?"):
-            self.app.destroy()
-
-    def load_image(self):
-        pass
+            self.app.destroy(side=tk.LEFT, padx=5)
 
     def glitch_image(self):
         pass
@@ -63,3 +78,31 @@ class GlitchArtGenerator:
 
     def reset_image(self):
         pass
+
+    def adjust_brightness(self):
+        pass
+
+    def adjust_saturation(self):
+        pass
+
+    def apply_blur(self):
+        pass
+
+    def apply_sharpen(self):
+        pass
+
+    def apply_pixels(self):
+        pass
+    
+    def apply_invert(self):
+        pass
+    
+    def apply_noise(self):
+        pass
+
+    def apply_vignette(self):
+        pass
+
+    def apply_retro_filter(self):
+        pass
+
